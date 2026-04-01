@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FixMate</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'fixmate/css/main.css' %}">
+<body>
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <div class="logo-icon">
+                    <span>&lt;/&gt;</span>
+                </div>
+                <span class="logo-text">FixMate</span>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#features">Возможности</a></li>
+                    <li><a href="#learning">Обучение</a></li>
+                    <li><a href="#review">AI Review</a></li>
+                    <li><a href="#pricing">Цены</a></li>
+                    <li><a href="#about">О нас</a></li>
+                </ul>
+            </nav>
+            <div class="nav-buttons">
+                <a href="#" class="btn btn-outline">Войти</a>
+                <a href="{% url 'fixmate:ai'%}" class="btn btn-primary">Начать бесплатно</a>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div>
+                    <div class="ai-badge">🚀 Обучение с искусственным интеллектом</div>
+                    <h1>Станьте профессиональным разработчиком с AI-наставником</h1>
+                    <p>Персонализированное обучение программированию с мгновенной AI code review. Получайте обратную связь как от опытного разработчика 24/7.</p>
+                    <a href="#" class="btn btn-primary" style="padding: 16px 48px; font-size: 18px;">Начать обучение</a>
+
+                    <div class="hero-stats">
+                        <div class="stat-item">
+                            <h3>50K+</h3>
+                            <p>Студентов</p>
+                        </div>
+                        <div class="stat-item">
+                            <h3>1M+</h3>
+                            <p>Ревью кода</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hero-image">
+                    <div class="code-preview">
+                        <div class="line"><span class="comment">// AI Code Review в реальном времени</span></div>
+                        <div class="line"><span class="keyword">function</span> <span class="function">calculateSum</span>(numbers) {</div>
+                        <div class="line">    <span class="keyword">return</span> numbers.reduce((acc, num) => {</div>
+                        <div class="line">        <span class="keyword">return</span> acc + num;</div>
+                        <div class="line">    }, 0);</div>
+                        <div class="line">}</div>
+                        <div class="line" style="color: #6a9955;">✓ Отличная реализация! Но можно добавить обработку пустого массива</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-title">
+                <h2>Почему выбирают FixMate</h2>
+                <p>Инновационный подход к обучению программированию с использованием искусственного интеллекта</p>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🤖</div>
+                    <h3>AI Code Review</h3>
+                    <p>Мгновенный анализ вашего кода с подробными рекомендациями по улучшению, оптимизации и лучшим практикам</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">📚</div>
+                    <h3>Персонализированный план</h3>
+                    <p>ИИ адаптирует программу обучения под ваш уровень, темп обучения и карьерные цели</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Практические проекты</h3>
+                    <p>Реальные проекты с автоматической проверкой кода и поддержкой AI-наставника 24/7</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Анализ прогресса</h3>
+                    <p>Детальная статистика ваших успехов и областей для улучшения на основе AI-аналитики</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="ai-review" id="review">
+        <div class="container">
+            <div class="section-title">
+                <h2>AI Code Review в действии</h2>
+                <p>Умный анализ кода, который помогает учиться на реальных примерах</p>
+            </div>
+
+            <div class="review-demo">
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>main.py</span>
+                        <span style="color: #6a9955;">✓ AI анализ завершен</span>
+                    </div>
+                    <div class="code-content">
+                        <div style="color: #6a9955;"># Пользовательский код</div>
+                        <div><span style="color: #569cd6;">def</span> <span style="color: #dcdcaa;">process_data</span>(items):</div>
+                        <div>    result = []</div>
+                        <div>    <span style="color: #569cd6;">for</span> i <span style="color: #569cd6;">in</span> <span style="color: #4fc1ff;">range</span>(<span style="color: #b5cea8;">len</span>(items)):</div>
+                        <div>        <span style="color: #569cd6;">if</span> items[i] > <span style="color: #b5cea8;">10</span>:</div>
+                        <div>            result.append(items[i] * <span style="color: #b5cea8;">2</span>)</div>
+                        <div>    <span style="color: #569cd6;">return</span> result</div>
+                    </div>
+                </div>
+
+                <div class="review-block">
+                    <div class="review-comment">
+                        <span class="ai-tag">AI Ревью</span>
+                        <h4>✨ Оптимизация кода</h4>
+                        <p>Рекомендуем использовать list comprehension для большей эффективности и читаемости:</p>
+                        <code style="background: #f0f0f0; padding: 10px; display: block; border-radius: 8px; margin-top: 10px;">
+                            return [item * 2 for item in items if item > 10]
+                        </code>
+                    </div>
+
+                    <div class="review-comment">
+                        <span class="ai-tag">AI Ревью</span>
+                        <h4>📝 Лучшие практики</h4>
+                        <p>Добавьте type hints для улучшения документации и поддержки IDE:</p>
+                        <code style="background: #f0f0f0; padding: 10px; display: block; border-radius: 8px; margin-top: 10px;">
+                            def process_data(items: list[int]) -> list[int]:
+                        </code>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="learning-paths" id="learning">
+        <div class="container">
+            <div class="section-title">
+                <h2>Пути обучения</h2>
+                <p>Выберите свой путь разработчика с поддержкой AI</p>
+            </div>
+
+            <div class="paths-grid">
+                <div class="path-card">
+                    <h3>Frontend разработчик</h3>
+                    <p>React, Vue, TypeScript, современный CSS</p>
+                    <div class="path-stats">
+                        <span>📚 42 модуля</span>
+                        <span>⭐ 4.9</span>
+                    </div>
+                </div>
+
+                <div class="path-card">
+                    <h3>Backend разработчик</h3>
+                    <p>Python, Java, Go, базы данных, микросервисы</p>
+                    <div class="path-stats">
+                        <span>📚 56 модулей</span>
+                        <span>⭐ 4.8</span>
+                    </div>
+                </div>
+
+                <div class="path-card">
+                    <h3>Fullstack разработчик</h3>
+                    <p>Frontend + Backend, DevOps основы</p>
+                    <div class="path-stats">
+                        <span>📚 84 модуля</span>
+                        <span>⭐ 4.9</span>
+                    </div>
+                </div>
+
+                <div class="path-card">
+                    <h3>Data Scientist</h3>
+                    <p>Python, ML, анализ данных, нейросети</p>
+                    <div class="path-stats">
+                        <span>📚 48 модулей</span>
+                        <span>⭐ 4.7</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta">
+        <div class="container">
+            <h2>Начните учиться с AI-наставником</h2>
+            <p>Присоединяйтесь к тысячам разработчиков, которые уже улучшили свои навыки с CodeAI</p>
+            <a href="#" class="btn btn-primary">Попробовать бесплатно →</a>
+            <p style="margin-top: 20px; font-size: 14px;">Не требуется кредитная карта</p>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-about">
+                    <div class="footer-logo">FixMate</div>
+                    <p>Революционный подход к обучению программированию с использованием искусственного интеллекта для персонализированного обучения и code review.</p>
+                </div>
+
+                <div class="footer-links">
+                    <h4>Продукт</h4>
+                    <ul>
+                        <li><a href="#">Возможности</a></li>
+                        <li><a href="#">Цены</a></li>
+                        <li><a href="#">Для команд</a></li>
+                        <li><a href="#">API</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-links">
+                    <h4>Ресурсы</h4>
+                    <ul>
+                        <li><a href="#">Блог</a></li>
+                        <li><a href="#">Документация</a></li>
+                        <li><a href="#">Поддержка</a></li>
+                        <li><a href="#">Сообщество</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
