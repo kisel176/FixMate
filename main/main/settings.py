@@ -129,3 +129,4 @@ STATICFILES_DIRS = [
     BASE_DIR / "fixmate" / "static",
 ]
 
+AUTH_USER_MODEL = 'user.User'

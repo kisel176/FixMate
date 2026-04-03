@@ -17,7 +17,7 @@
                 <div class="info-content">
                     <div class="logo">
                         <div class="logo-icon">&lt;/&gt;</div>
-                        <span class="logo-text">AI Code Assistant</span>
+                        <span class="logo-text">FixMate</span>
                     </div>
                     <h1>Создайте аккаунт</h1>
                     <p>Присоединяйтесь к платформе для обучения программированию с искусственным интеллектом</p>
@@ -52,7 +52,7 @@
             <div class="register-form-container">
                 <div class="form-header">
                     <h2>Регистрация</h2>
-                    <p>Уже есть аккаунт? <a href="/login">Войти</a></p>
+                    <p>Уже есть аккаунт? <a href="{% url 'user:login'%}">Войти</a></p>
                 </div>
 
                 <form class="register-form" action="/api/register/" method="POST">
