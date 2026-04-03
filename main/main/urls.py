@@ -4,4 +4,5 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('fixmate.urls', namespace='main')),
+    path('user/', include('user.urls', namespace='users')),
 ]
