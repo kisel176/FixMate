@@ -58,8 +58,8 @@
             <div class="profile-header">
                 <div class="profile-cover">
                     <div class="profile-avatar-container">
-                        {% if user.avatar %}
-                        <img src="{{ user.avatar.url }}" alt="Аватар" class="profile-avatar">
+                        {% if user.image %}
+                        <img src="{{ user.image.url }}" alt="Аватар" class="profile-avatar">
                         {% else %}
                         <div class="profile-avatar default-avatar">
                             {{ user.first_name|first|default:user.username|first|upper }}

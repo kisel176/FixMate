@@ -3,7 +3,7 @@ from django.db import models
 
 class User(AbstractUser):
     image = models.ImageField(
-        upload_to='users_images',
+        upload_to='avatars/',
         blank=True,
         null=True,
         default=None,  # Явно указываем значение по умолчанию
@@ -41,16 +41,16 @@ class User(AbstractUser):
         return self.username
 
     def save(self, *args, **kwargs):
-        # Объединяем оба метода в один
+        # Убираем автоматическое добавление users_images/
         if not self.username:
             if self.email:
                 self.username = self.email.split('@')[0]
             else:
                 self.username = f"user_{self.pk if self.pk else 'temp'}"
 
-        # Автоматически добавляем префикс папки если его нет
-        if self.image and self.image.name and not self.image.name.startswith('users_images/'):
-            self.image.name = f'users_images/{self.image.name}'
+        # УДАЛИТЕ ЭТУ СТРОКУ! Она ломает пути:
+        # if self.image and self.image.name and not self.image.name.startswith('users_images/'):
+        #     self.image.name = f'users_images/{self.image.name}'
 
         super().save(*args, **kwargs)
 
