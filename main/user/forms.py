@@ -13,77 +13,26 @@ class UserLoginForm(AuthenticationForm):
     password = forms.CharField()
 
 class UserRegistrationForm(UserCreationForm):
-    email = forms.EmailField(
-        required=True,
-        widget=forms.EmailInput(attrs={
-            'class': 'form-input',
-            'placeholder': 'Ваш email'
-        })
-    )
-
-    first_name = forms.CharField(
-        required=True,
-        widget=forms.TextInput(attrs={
-            'class': 'form-input',
-            'placeholder': 'Ваше имя'
-        })
-    )
-
-    last_name = forms.CharField(
-        required=True,
-        widget=forms.TextInput(attrs={
-            'class': 'form-input',
-            'placeholder': 'Ваша фамилия'
-        })
-    )
-
-    username = forms.CharField(
-        required=True,
-        widget=forms.TextInput(attrs={
-            'class': 'form-input',
-            'placeholder': 'Ваш никнейм'
-        })
-    )
-
-    password1 = forms.CharField(
-        required=True,
-        widget=forms.TextInput(attrs={
-            'class': 'form-input',
-            'placeholder': 'Ваш пароль'
-        })
-    )
-
-    password2 = forms.CharField(
-        required=True,
-        widget=forms.TextInput(attrs={
-            'class': 'form-input',
-            'placeholder': 'Повторите пороль'
-        })
-    )
-
-    terms = forms.BooleanField(
-        required=True,
-        error_messages={'required': 'Вы должны принять условия использования'},
-        widget=forms.CheckboxInput(attrs={
-            'class': 'form-check-input',
-            'placeholder': 'Условия пользователя'
-        })
-    )
+    email = forms.EmailField()
+    first_name = forms.CharField()
+    username = forms.CharField()
+    password1 = forms.CharField()
+    password2 = forms.CharField()
 
     class Meta:
         model = User
-        fields = ('username', 'email', 'first_name', 'last_name', 'password1', 'password2')
-        widgets = {
-            'username': forms.TextInput(attrs={
-                'class': 'form-input',
-                'placeholder': 'Имя пользователя'
-            }),
-            'password1': forms.PasswordInput(attrs={
-                'class': 'form-input',
-                'placeholder': 'Пароль'
-            }),
-            'password2': forms.PasswordInput(attrs={
-                'class': 'form-input',
-                'placeholder': 'Повторите пароль'
-            }),
-        }
+        fields = ('username', 'email', 'first_name', 'password1', 'password2')
+
+class UserChangeForm(UserCreationForm):
+    class Meta:
+        model = User
+        fields = ('username', 'email', 'first_name', 'image')
+
+    first_name = forms.CharField()
+    username = forms.CharField()
+    email = forms.EmailField()
+    image = forms.ImageField()
+    bio = forms.Textarea()
+    website = forms.URLField()
+    github = forms.URLField()
+    linkedin = forms.URLField()

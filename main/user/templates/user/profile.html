@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="ru">
+<head>
+   <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FixMate</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'fixmate/css/profile.css' %}">
+    <link rel="stylesheet" href="{% static 'fixmate/js/profile.js' %}">
+</head>
+<body>
+    <div class="container">
+        <!-- Боковая панель навигации -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-icon">&lt;/&gt;</div>
+                    <span class="logo-text">FixMate</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="/dashboard/" class="nav-item">
+                    <i class="nav-icon">📊</i>
+                    <span>Дашборд</span>
+                </a>
+                <a href="/chats/" class="nav-item">
+                    <i class="nav-icon">💬</i>
+                    <span>Чаты</span>
+                </a>
+                <a href="/courses/" class="nav-item">
+                    <i class="nav-icon">📚</i>
+                    <span>Курсы</span>
+                </a>
+                <a href="/profile/" class="nav-item active">
+                    <i class="nav-icon">👤</i>
+                    <span>Профиль</span>
+                </a>
+                <a href="/settings/" class="nav-item">
+                    <i class="nav-icon">⚙️</i>
+                    <span>Настройки</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <a href="/logout/" class="logout-btn">
+                    <i class="nav-icon">🚪</i>
+                    <span>Выйти</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Основной контент -->
+        <main class="main-content">
+            <!-- Шапка профиля -->
+            <div class="profile-header">
+                <div class="profile-cover">
+                    <div class="profile-avatar-container">
+                        {% if user.avatar %}
+                        <img src="{{ user.avatar.url }}" alt="Аватар" class="profile-avatar">
+                        {% else %}
+                        <div class="profile-avatar default-avatar">
+                            {{ user.first_name|first|default:user.username|first|upper }}
+                        </div>
+                        {% endif %}
+                        <button class="edit-avatar-btn" id="editAvatarBtn" title="Изменить аватар">
+                            <i>📷</i>
+                        </button>
+                    </div>
+                    <div class="profile-info">
+                        <h1 class="profile-name" id="profileName">{{ user.first_name|default:user.username }}</h1>
+                        <p class="profile-username">@{{ user.username }}</p>
+                        <p class="profile-bio" id="profileBio">{{ user.bio|default:"Разработчик, изучающий программирование с AI" }}</p>
+                        <div class="profile-stats">
+                            <div class="stat">
+                                <span class="stat-value">{{ user.courses_completed|default:"0" }}</span>
+                                <span class="stat-label">Курсов завершено</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-value">{{ user.code_reviews|default:"0" }}</span>
+                                <span class="stat-label">Code Review</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-value">{{ user.projects|default:"0" }}</span>
+                                <span class="stat-label">Проектов</span>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="edit-profile-btn" id="openEditModalBtn">
+                        <i>✏️</i>
+                        Редактировать профиль
+                    </button>
+                </div>
+            </div>
+
+            <!-- Вкладки профиля -->
+            <div class="profile-tabs">
+                <button class="tab-btn active" data-tab="activity">Активность</button>
+                <button class="tab-btn" data-tab="courses">Мои курсы</button>
+                <button class="tab-btn" data-tab="achievements">Достижения</button>
+                <button class="tab-btn" data-tab="settings">Настройки</button>
+            </div>
+
+            <!-- Контент вкладок -->
+            <div class="tab-content">
+                <!-- Вкладка активности -->
+                <div class="tab-pane active" id="activityTab">
+                    <div class="activity-timeline">
+                        <h3>Недавняя активность</h3>
+                        <div class="activity-list">
+                            <div class="activity-item">
+                                <div class="activity-icon">💻</div>
+                                <div class="activity-details">
+                                    <p class="activity-text">Завершил курс <strong>Python для начинающих</strong></p>
+                                    <p class="activity-time">2 часа назад</p>
+                                </div>
+                            </div>
+                            <div class="activity-item">
+                                <div class="activity-icon">🤖</div>
+                                <div class="activity-details">
+                                    <p class="activity-text">Получил AI Code Review для проекта <strong>Веб-приложение</strong></p>
+                                    <p class="activity-time">Вчера</p>
+                                </div>
+                            </div>
+                            <div class="activity-item">
+                                <div class="activity-icon">💬</div>
+                                <div class="activity-details">
+                                    <p class="activity-text">Создал новый чат <strong>Вопросы по Django</strong></p>
+                                    <p class="activity-time">3 дня назад</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Вкладка курсов -->
+                <div class="tab-pane" id="coursesTab">
+                    <div class="courses-grid">
+                        <div class="course-card">
+                            <div class="course-progress">
+                                <div class="progress-bar" style="width: 100%"></div>
+                            </div>
+                            <h4>Python для начинающих</h4>
+                            <p>Основы программирования на Python</p>
+                            <span class="course-status completed">✅ Завершен</span>
+                        </div>
+                        <div class="course-card">
+                            <div class="course-progress">
+                                <div class="progress-bar" style="width: 65%"></div>
+                            </div>
+                            <h4>Веб-разработка на Django</h4>
+                            <p>Создание веб-приложений</p>
+                            <span class="course-status in-progress">🔄 В процессе</span>
+                        </div>
+                        <div class="course-card">
+                            <div class="course-progress">
+                                <div class="progress-bar" style="width: 30%"></div>
+                            </div>
+                            <h4>JavaScript и React</h4>
+                            <p>Фронтенд разработка</p>
+                            <span class="course-status in-progress">🔄 В процессе</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Вкладка достижений -->
+                <div class="tab-pane" id="achievementsTab">
+                    <div class="achievements-grid">
+                        <div class="achievement-card">
+                            <div class="achievement-icon">🏆</div>
+                            <h4>Первые шаги</h4>
+                            <p>Завершен первый курс</p>
+                        </div>
+                        <div class="achievement-card">
+                            <div class="achievement-icon">⚡</div>
+                            <h4>Код-мастер</h4>
+                            <p>50+ Code Review запросов</p>
+                        </div>
+                        <div class="achievement-card">
+                            <div class="achievement-icon">💬</div>
+                            <h4>Активный участник</h4>
+                            <p>100+ сообщений в чатах</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Вкладка настроек -->
+                <div class="tab-pane" id="settingsTab">
+                    <div class="settings-section">
+                        <h3>Настройки профиля</h3>
+                        <div class="settings-item">
+                            <div class="settings-info">
+                                <h4>Email уведомления</h4>
+                                <p>Получать уведомления о новых ответах AI</p>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="emailNotifications" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="settings-item">
+                            <div class="settings-info">
+                                <h4>Публичный профиль</h4>
+                                <p>Показывать профиль другим пользователям</p>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="publicProfile" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="settings-item">
+                            <div class="settings-info">
+                                <h4>Темная тема</h4>
+                                <p>Использовать темную тему оформления</p>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="darkTheme" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="settings-item">
+                            <div class="settings-info">
+                                <h4>AI подсказки</h4>
+                                <p>Показывать подсказки при написании кода</p>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="aiTips" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Модальное окно редактирования профиля -->
+    <div class="modal" id="editProfileModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i>✏️</i> Редактирование профиля</h3>
+                <button class="modal-close" id="closeModalBtn">&times;</button>
+            </div>
+            <form action="{% url 'user:profile' %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <!-- Аватар -->
+                <div class="modal-body">
+                    <!-- Аватар -->
+                    <div class="form-group">
+                        <label>Аватар профиля
+                        <div class="avatar-upload">
+                            <div class="current-avatar" id="currentAvatarPreview">
+                                {% if user.image %}
+                                    <img src="{{ user.image.url }}" alt="Аватар" onerror="console.log('Image failed to load'); this.style.display='none';">
+                                {% else %}
+                                <div class="default-avatar-preview">
+                                    {{ user.first_name|first|default:user.username|first|upper }}
+                                </div>
+                                {% endif %}
+                            </div>
+                            <label for="id_image" class="avatar-upload" title="Изменить аватар">
+                                <i class="fas fa-camera"></i>
+                                <input type="file" id="id_image" name="image" accept="image/*" style="display: none;">
+                            </label>
+                            <small class="form-text">Рекомендуемый размер: 200x200px. Максимум 5MB</small>
+                        </div></label>
+                    </div>
+
+                    <!-- Отображаемое имя -->
+                    <div class="form-group">
+                        <label for="id_first_name">Отображаемое имя</label>
+                        <input type="text" id="id_first_name" name="first_name" class="form-control"
+                               value="{{ user.first_name|default:user.username }}" required>
+                    </div>
+
+                    <!-- Имя пользователя -->
+                    <div class="form-group">
+                        <label for="id_username">Имя пользователя</label>
+                        <input type="text" id="id_username" name="username" class="form-control"
+                               value="{{ user.username }}" required readonly>
+                        <small class="form-text">Имя пользователя нельзя изменить</small>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="form-group">
+                        <label for="id_email">Email адрес</label>
+                        <input type="email" id="id_email" name="email" class="form-control"
+                               value="{{ user.email }}" required>
+                    </div>
+
+                    <!-- Биография -->
+                    <div class="form-group">
+                        <label for="id_bio">О себе</label>
+                        <textarea id="id_bio" name="bio" class="form-control" rows="4"
+                                  placeholder="Расскажите о себе...">{{ user.bio|default:"" }}</textarea>
+                        <small class="form-text">Максимум 500 символов</small>
+                    </div>
+
+                    <!-- Веб-сайт -->
+                    <div class="form-group">
+                        <label for="id_website">Веб-сайт / Портфолио</label>
+                        <input type="url" id="id_website" name="website" class="form-control"
+                               value="{{ user.website|default:'' }}" placeholder="https://example.com">
+                    </div>
+                    <!-- Социальные сети -->
+                    <div class="form-group">
+                        <label for="id_github">GitHub</label>
+                        <input type="url" id="id_github" name="github" class="form-control" placeholder="GitHub URL"
+                               value="{{ user.github|default:'' }}" style="margin-bottom: 8px;">
+                        <label for="id_linkedin">LinkedIn</label>
+                        <input type="url" id="id_linkedin" name="linkedin" class="form-control" placeholder="LinkedIn URL"
+                               value="{{ user.linkedin|default:'' }}">
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn-modal btn-modal-secondary" id="cancelModalBtn">Отмена</button>
+                    <button type="submit" class="btn-modal btn-modal-primary">Сохранить изменения</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Уведомление -->
+    <div class="toast-notification" id="toastNotification">
+        <span class="toast-icon">✓</span>
+        <span class="toast-message">Профиль успешно обновлен!</span>
+    </div>
+    <script src="{% static 'fixmate/js/profile.js' %}" ></script>
+</body>
+</html>
