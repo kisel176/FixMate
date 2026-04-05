@@ -47,33 +47,18 @@ def registr(request):
     return render(request, "user/registr.html", context)
 
 def profile(request):
-    if request.method == 'POST' and 'image' in request.FILES:
-        # Только загрузка аватарки
-        user = request.user
-
-        # Удаляем старую если есть
-        if user.image:
-            user.image.delete(save=False)
-
-        # Сохраняем новую
-        user.image = request.FILES['image']
-        user.save()
-
-        return redirect('user:profile')
     if request.method == 'POST':
-        form = UserChangeForm(
-            data=request.POST,
-            files=request.FILES,  # Важно для загрузки изображений!
-            instance=request.user
-        )
+        form = UserChangeForm(request.POST, request.FILES, instance=request.user)
         if form.is_valid():
             user = form.save(commit=False)
-            # Если введен новый пароль
-            if form.cleaned_data.get('password1'):
-                user.set_password(form.cleaned_data['password1'])
+            # Обработка username (он readonly, но на всякий случай)
+            user.username = request.user.username
             user.save()
-            messages.success(request, "Профиль успешно обнавлён")
-            return redirect('user:profile')
+            messages.success(request, 'Профиль успешно обновлен!')
+            return redirect('user:profile')  # Измените на ваш URL профиля
+        else:
+            messages.error(request, 'Пожалуйста, исправьте ошибки в форме.')
+            print(form.errors)  # Для отладки
     else:
         form = UserChangeForm(instance=request.user)
     context = {
