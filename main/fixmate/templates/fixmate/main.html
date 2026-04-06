@@ -27,8 +27,8 @@
                 </ul>
             </nav>
             <div class="nav-buttons">
-                <a href="#" class="btn btn-outline">Войти</a>
-                <a href="{% url 'fixmate:ai'%}" class="btn btn-primary">Начать бесплатно</a>
+                <a href="{% url 'user:login' %}" class="btn btn-outline">Войти</a>
+                <a href="{% url 'user:registr'%}" class="btn btn-primary">Начать бесплатно</a>
             </div>
         </div>
     </header>
@@ -40,7 +40,7 @@
                     <div class="ai-badge">🚀 Обучение с искусственным интеллектом</div>
                     <h1>Станьте профессиональным разработчиком с AI-наставником</h1>
                     <p>Персонализированное обучение программированию с мгновенной AI code review. Получайте обратную связь как от опытного разработчика 24/7.</p>
-                    <a href="#" class="btn btn-primary" style="padding: 16px 48px; font-size: 18px;">Начать обучение</a>
+                    <a href="{% url 'user:registr'%}" class="btn btn-primary" style="padding: 16px 48px; font-size: 18px;">Начать обучение</a>
 
                     <div class="hero-stats">
                         <div class="stat-item">
@@ -202,7 +202,7 @@
         <div class="container">
             <h2>Начните учиться с AI-наставником</h2>
             <p>Присоединяйтесь к тысячам разработчиков, которые уже улучшили свои навыки с CodeAI</p>
-            <a href="#" class="btn btn-primary">Попробовать бесплатно →</a>
+            <a href="{% url 'user:registr'%}" class="btn btn-primary">Попробовать бесплатно →</a>
             <p style="margin-top: 20px; font-size: 14px;">Не требуется кредитная карта</p>
         </div>
     </section>
