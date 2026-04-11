@@ -5,8 +5,8 @@ from django.urls import path, include
 
 from . import views
 
-app_name = 'fixmate'
+app_name = 'ai'
 
 urlpatterns = [
-    path('main/', views.main, name='main'),
+    path('chat/', views.chat, name='chat'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

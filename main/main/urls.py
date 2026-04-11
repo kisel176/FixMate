@@ -7,6 +7,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('fixmate.urls', namespace='main')),
     path('user/', include('user.urls', namespace='users')),
+    path('chat/', include('chat.urls', namespace='chats')),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

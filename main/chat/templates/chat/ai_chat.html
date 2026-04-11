@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="ru">
+<head>
+   <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FixMate</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'fixmate/css/ai.css' %}">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="chat-sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-icon">&lt;/&gt;</div>
+                    <span class="logo-text">FixMate</span>
+                </div>
+                <button class="new-chat-btn">
+                    <i class="fas fa-plus"></i> Новый чат
+                </button>
+            </div>
+
+            <div class="chat-list">
+                <div class="chat-item active">
+                    <div class="chat-name">
+                        <span>Чат с AI помощником</span>
+                        <span class="chat-time">Сегодня</span>
+                    </div>
+                    <div class="chat-preview">Помощь с кодом на Python</div>
+                </div>
+                <div class="chat-item">
+                    <div class="chat-name">
+                        <span>Анализ кода</span>
+                        <span class="chat-time">Вчера</span>
+                    </div>
+                    <div class="chat-preview">Рефакторинг функции</div>
+                </div>
+                <div class="chat-item">
+                    <div class="chat-name">
+                        <span>Вопросы по Django</span>
+                        <span class="chat-time">2 дня назад</span>
+                    </div>
+                    <div class="chat-preview">Настройка моделей</div>
+                </div>
+                <div class="chat-item">
+                    <div class="chat-name">
+                        <span>JavaScript</span>
+                        <span class="chat-time">3 дня назад</span>
+                    </div>
+                    <div class="chat-preview">Промисы и async/await</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Chat Header -->
+            <div class="chat-header">
+                <div class="chat-info">
+                    <i class="fas fa-comments"></i>
+                    <h2>Чат с AI помощником</h2>
+                </div>
+                <div class="chat-actions">
+                    <button class="icon-btn" title="Удалить чат">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Code Section -->
+            <div class="code-section">
+                <div class="code-header">
+                    <span class="code-title">
+                        <i class="fas fa-code"></i> КОД ДЛЯ АНАЛИЗА
+                    </span>
+                    <div class="language-selector">
+                        <button class="lang-btn active">Python</button>
+                        <button class="lang-btn">JavaScript</button>
+                        <button class="lang-btn">Java</button>
+                        <button class="lang-btn">C++</button>
+                    </div>
+                </div>
+
+                <div class="code-editor-container">
+                    <div class="editor-header">
+                        <span class="filename">main.py</span>
+                        <button class="icon-btn" title="Очистить">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
+                    <textarea class="code-editor" placeholder='# Напишите или вставьте код для анализа...&#10;# Например:&#10;&#10;def calculate_sum(numbers):&#10;    """Функция для подсчета суммы чисел"""&#10;    return sum(numbers)&#10;&#10;result = calculate_sum([1, 2, 3, 4, 5])&#10;print(f"Сумма: {result}")'></textarea>
+                </div>
+
+                <div class="code-actions">
+                    <button class="btn-primary">
+                        <i class="fas fa-brain"></i> Анализировать
+                    </button>
+                    <button class="btn-secondary">
+                        <i class="fas fa-paperclip"></i> Прикрепить код
+                    </button>
+                </div>
+            </div>
+
+            <!-- Chat Messages -->
+            <div class="chat-messages">
+                <div class="message">
+                    <div class="message-avatar">🤖</div>
+                    <div class="message-content">
+                        <p>Привет! Я AI ассистент для анализа кода.</p>
+                        <p>Загрузите код, и я помогу найти ошибки, оптимизировать и улучшить его.</p>
+                        <div class="message-time">10:30</div>
+                    </div>
+                </div>
+
+                <div class="message user">
+                    <div class="message-avatar">👤</div>
+                    <div class="message-content">
+                        <p>Помоги мне оптимизировать эту функцию:</p>
+                        <pre><code>def find_duplicates(arr):
+    duplicates = []
+    for i in range(len(arr)):
+        for j in range(i + 1, len(arr)):
+            if arr[i] == arr[j] and arr[i] not in duplicates:
+                duplicates.append(arr[i])
+    return duplicates</code></pre>
+                        <div class="message-time">10:32</div>
+                    </div>
+                </div>
+
+                <div class="message">
+                    <div class="message-avatar">🤖</div>
+                    <div class="message-content">
+                        <p>Ваша функция работает, но имеет сложность O(n²). Вот оптимизированная версия:</p>
+                        <pre><code>def find_duplicates(arr):
+    seen = set()
+    duplicates = set()
+    for item in arr:
+        if item in seen:
+            duplicates.add(item)
+        else:
+            seen.add(item)
+    return list(duplicates)</code></pre>
+                        <p>✅ Сложность уменьшена до O(n)</p>
+                        <p>✅ Используется множество для поиска дубликатов</p>
+                        <p>✅ Код стал более читаемым</p>
+                        <div class="message-time">10:33</div>
+                    </div>
+                </div>
+
+                <div class="message user">
+                    <div class="message-avatar">👤</div>
+                    <div class="message-content">
+                        <p>Спасибо! А как это работает с большими данными?</p>
+                        <div class="message-time">10:35</div>
+                    </div>
+                </div>
+
+                <div class="message">
+                    <div class="message-avatar">🤖</div>
+                    <div class="message-content">
+                        <p>Отличный вопрос! Оптимизированная версия:</p>
+                        <p>📊 Работает за O(n) времени<br>
+                        💾 Использует O(n) дополнительной памяти<br>
+                        🚀 Может обрабатывать миллионы элементов за секунды</p>
+                        <p>В отличие от исходной версии с O(n²), которая будет очень медленной на больших массивах.</p>
+                        <div class="message-time">10:36</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Input -->
+            <div class="chat-input-container">
+                <div class="input-wrapper">
+                    <input type="text" class="chat-input"
+                           placeholder="Спросите о коде, попросите объяснить или улучшить...">
+                    <button class="send-btn">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
