@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'fixmate',
     'user',
     'chat',
+    'rest_framework'
 ]
 
 MIDDLEWARE = [
@@ -151,3 +152,9 @@ EMAIL_USE_SSL = True
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 SERVER_EMAIL = EMAIL_HOST_USER
 EMAIL_ADMIN = EMAIL_HOST_USER
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',  # чтоб левые не лазили
+    ]
+}
