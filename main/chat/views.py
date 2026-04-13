@@ -1,111 +1,145 @@
-import json
-
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
-from django.shortcuts import render, get_object_or_404
-from django.views.decorators.http import require_POST
-from rest_framework import viewsets
-from rest_framework.decorators import action
-from rest_framework.response import Response
-
+from django.contrib import messages
 from .models import Chat, Message
-from .serializers import ChatSerializer
+from .forms import MessageForm, CodeAnalysisForm
 
 
+#All chats
 @login_required
-def chat_app(request, chat_id=None):
-    user_chats = Chat.objects.filter(user=request.user).order_by('-updated_at')
+def chat_list(request):
+    chats = Chat.objects.filter(user=request.user)
 
-    current_chat = None
-    messages = []
-    if chat_id:
-        current_chat = get_object_or_404(Chat, id=chat_id, user=request.user)
-        messages = current_chat.messages.all().order_by('created_at')
+    # Если нет чатов, создаем первый
+    if not chats.exists():
+        first_chat = Chat.objects.create(
+            user=request.user,
+            title='Первый чат'
+        )
+        return redirect('ai:chat_detail', chat_id=first_chat.id)
+
+    # Перенаправляем на последний активный чат
+    last_chat = chats.first()
+    return redirect('ai:chat_detail', chat_id=last_chat.id)
+
+#main page
+@login_required
+def chat_detail(request, chat_id):
+    chat = get_object_or_404(Chat, id=chat_id, user=request.user)
+    chats = Chat.objects.filter(user=request.user)
+    messages_list = chat.messages.all()
+
+    message_form = MessageForm()
+    code_form = CodeAnalysisForm()
 
     context = {
-        'user_chats': user_chats,
-        'current_chat': current_chat,
-        'messages': messages,
+        'chat': chat,
+        'chats': chats,
+        'messages': messages_list,
+        'message_form': message_form,
+        'code_form': code_form,
     }
-    return render(request, "chat/ai_chat.html")
 
+    return render(request, 'chat/ai_chat.html', context)
 
+#new chat
 @login_required
-@require_POST
-def create_chat_api(request):
-    """Создание нового пустого чата"""
-    try:
-        new_chat = Chat.objects.create(
+def create_chat(request):
+    if request.method == 'POST':
+        title = request.POST.get('title', 'Новый чат')
+        chat = Chat.objects.create(
             user=request.user,
-            title="Новый чат"
+            title=title
         )
-        return JsonResponse({
-            'success': True,
-            'chat': {
-                'id': new_chat.id,
-                'title': new_chat.title,
-                'updated_at': new_chat.updated_at.strftime("%Y-%m-%d %H:%M")
-            }
-        })
-    except Exception as e:
-        return JsonResponse({'success': False, 'error': str(e)}, status=400)
+        messages.success(request, 'Чат создан!')
+        return redirect('ai:chat_detail', chat_id=chat.id)
+
+    # Если GET - создаем чат с дефолтным названием
+    chat = Chat.objects.create(
+        user=request.user,
+        title='Новый чат'
+    )
+    return redirect('ai:chat_detail', chat_id=chat.id)
+
+#massange send
+@login_required
+def send_message(request, chat_id):
+    chat = get_object_or_404(Chat, id=chat_id, user=request.user)
+
+    if request.method == 'POST':
+        form = MessageForm(request.POST)
+        if form.is_valid():
+            content = form.cleaned_data['content']
+
+            # Сохраняем сообщение пользователя
+            Message.objects.create(
+                chat=chat,
+                role='user',
+                content=content
+            )
+
+            # Получаем ответ от AI
+            ai_response = get_ai_response(content, chat)
+
+            # Сохраняем ответ
+            Message.objects.create(
+                chat=chat,
+                role='assistant',
+                content=ai_response
+            )
+
+            # Обновляем название чата если это первое сообщение
+            if chat.messages.count() <= 2:
+                chat.title = content[:30] + ('...' if len(content) > 30 else '')
+                chat.save()
+
+            chat.save()  # обновляем updated_at
+
+    return redirect('ai:chat_detail', chat_id=chat.id)
+
+@login_required
+def analyze_code(request, chat_id):
+    chat = get_object_or_404(Chat, id=chat_id, user=request.user)
+
+    if request.method == 'POST':
+        form = CodeAnalysisForm(request.POST)
+        if form.is_valid():
+            code = form.cleaned_data['code']
+            language = form.cleaned_data['language']
+
+            # Формируем промпт для AI
+            prompt = f"Проанализируй этот код на {language}:\n\n```{language}\n{code}\n```"
+
+            # Сохраняем сообщение пользователя
+            Message.objects.create(
+                chat=chat,
+                role='user',
+                content=f"Анализ кода на {language}:\n\n```{language}\n{code}\n```"
+            )
+
+            # Получаем ответ от AI
+            ai_response = get_ai_response(prompt, chat)
+
+            # Сохраняем ответ
+            Message.objects.create(
+                chat=chat,
+                role='assistant',
+                content=ai_response
+            )
+
+            chat.save()
+            messages.success(request, 'Код проанализирован!')
+
+    return redirect('ai:chat_detail', chat_id=chat.id)
 
 
 @login_required
-@require_POST
-def send_message_api(request):
-    """Отправка сообщения и получение ответа от нейросети"""
-    data = json.loads(request.body)
-    chat_id = data.get('chat_id')
-    prompt = data.get('message', '').strip()
+def delete_chat(request, chat_id):
+    chat = get_object_or_404(Chat, id=chat_id, user=request.user)
+    chat.delete()
+    messages.success(request, 'Чат удален!')
+    return redirect('ai:chat_list')
 
-    if not prompt:
-        return JsonResponse({'success': False, 'error': 'Пустое сообщение'}, status=400)
 
-    # Логика создания чата "на лету"
-    if chat_id:
-        chat = get_object_or_404(Chat, id=chat_id, user=request.user)
-    else:
-        # Создаем новый чат с названием из первого сообщения
-        title = prompt[:30] + ('...' if len(prompt) > 30 else '')
-        chat = Chat.objects.create(user=request.user, title=title)
-
-    # Сохраняем сообщение пользователя
-    user_message = Message.objects.create(
-        chat=chat,
-        role='user',
-        content=prompt
-    )
-
-    # Обновляем дату изменения чата
-    chat.save()  # auto_now=True сработает
-
-    # --- ЭМУЛЯЦИЯ ОТВЕТА НЕЙРОСЕТИ ---
-    # Замените этот блок на реальный вызов LLM (ChatGPT, Claude, local LLM)
-    # В реальном проекте здесь может быть вызов Celery задачи или синхронный запрос к API
-    import time
-    time.sleep(0.5)  # Имитация задержки сети (для демонстрации индикатора набора текста)
-    ai_response_text = f"Это тестовый ответ от нейросети на запрос: '{prompt}'. Вы находитесь в чате #{chat.id}"
-    # ---------------------------------
-
-    ai_message = Message.objects.create(
-        chat=chat,
-        role='assistant',
-        content=ai_response_text
-    )
-
-    return JsonResponse({
-        'success': True,
-        'chat_id': chat.id,
-        'user_message': {
-            'id': user_message.id,
-            'content': user_message.content,
-            'created_at': user_message.created_at.strftime("%H:%M")
-        },
-        'ai_message': {
-            'id': ai_message.id,
-            'content': ai_message.content,
-            'created_at': ai_message.created_at.strftime("%H:%M")
-        },
-        'chat_title': chat.title
-    })
+def get_ai_response(prompt, chat):
+    pass

@@ -2,9 +2,9 @@
 {% load static %}
 <html lang="ru">
 <head>
-   <meta charset="UTF-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FixMate</title>
+    <title>FixMate - {{ chat.title }}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{% static 'fixmate/css/ai.css' %}">
@@ -18,40 +18,36 @@
                     <div class="logo-icon">&lt;/&gt;</div>
                     <span class="logo-text">FixMate</span>
                 </div>
-                <button class="new-chat-btn">
-                    <i class="fas fa-plus"></i> Новый чат
-                </button>
+                <form method="post" action="{% url 'ai:create_chat' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="new-chat-btn">
+                        <i class="fas fa-plus"></i> Новый чат
+                    </button>
+                </form>
             </div>
 
             <div class="chat-list">
-                <div class="chat-item active">
-                    <div class="chat-name">
-                        <span>Чат с AI помощником</span>
-                        <span class="chat-time">Сегодня</span>
-                    </div>
-                    <div class="chat-preview">Помощь с кодом на Python</div>
-                </div>
-                <div class="chat-item">
-                    <div class="chat-name">
-                        <span>Анализ кода</span>
-                        <span class="chat-time">Вчера</span>
-                    </div>
-                    <div class="chat-preview">Рефакторинг функции</div>
-                </div>
-                <div class="chat-item">
-                    <div class="chat-name">
-                        <span>Вопросы по Django</span>
-                        <span class="chat-time">2 дня назад</span>
-                    </div>
-                    <div class="chat-preview">Настройка моделей</div>
-                </div>
-                <div class="chat-item">
-                    <div class="chat-name">
-                        <span>JavaScript</span>
-                        <span class="chat-time">3 дня назад</span>
-                    </div>
-                    <div class="chat-preview">Промисы и async/await</div>
-                </div>
+                {% for c in chats %}
+                    <a href="{% url 'ai:chat_detail' c.id %}" style="text-decoration: none; color: inherit;">
+                        <div class="chat-item {% if c.id == chat.id %}active{% endif %}">
+                            <div class="chat-name">
+                                <span>{{ c.title|default:"Новый чат" }}</span>
+                                <span class="chat-time">
+                                    {% if c.updated_at|date:"Y-m-d" == now|date:"Y-m-d" %}
+                                        Сегодня
+                                    {% else %}
+                                        {{ c.updated_at|date:"d.m.Y" }}
+                                    {% endif %}
+                                </span>
+                            </div>
+                            <div class="chat-preview">
+                                {% with last_msg=c.get_last_message %}
+                                    {{ last_msg.content|truncatechars:50|default:"Нет сообщений" }}
+                                {% endwith %}
+                            </div>
+                        </div>
+                    </a>
+                {% endfor %}
             </div>
         </aside>
 
@@ -61,128 +57,128 @@
             <div class="chat-header">
                 <div class="chat-info">
                     <i class="fas fa-comments"></i>
-                    <h2>Чат с AI помощником</h2>
+                    <h2>{{ chat.title|default:"Новый чат" }}</h2>
                 </div>
                 <div class="chat-actions">
-                    <button class="icon-btn" title="Удалить чат">
-                        <i class="fas fa-trash-alt"></i>
-                    </button>
+                    <form method="post" action="{% url 'ai:delete_chat' chat.id %}"
+                          onsubmit="return confirm('Удалить этот чат?');">
+                        {% csrf_token %}
+                        <button type="submit" class="icon-btn" title="Удалить чат">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </form>
                 </div>
             </div>
 
             <!-- Code Section -->
             <div class="code-section">
-                <div class="code-header">
-                    <span class="code-title">
-                        <i class="fas fa-code"></i> КОД ДЛЯ АНАЛИЗА
-                    </span>
-                    <div class="language-selector">
-                        <button class="lang-btn active">Python</button>
-                        <button class="lang-btn">JavaScript</button>
-                        <button class="lang-btn">Java</button>
-                        <button class="lang-btn">C++</button>
+                <form method="post" action="{% url 'ai:analyze_code' chat.id %}">
+                    {% csrf_token %}
+                    <div class="code-header">
+                        <span class="code-title">
+                            <i class="fas fa-code"></i> КОД ДЛЯ АНАЛИЗА
+                        </span>
+                        <div class="language-selector">
+                            {{ code_form.language }}
+                        </div>
                     </div>
-                </div>
 
-                <div class="code-editor-container">
-                    <div class="editor-header">
-                        <span class="filename">main.py</span>
-                        <button class="icon-btn" title="Очистить">
-                            <i class="fas fa-trash-alt"></i>
+                    <div class="code-editor-container">
+                        <div class="editor-header">
+                            <span class="filename">main.py</span>
+                            <button type="button" class="icon-btn" onclick="clearEditor()" title="Очистить">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </div>
+                        {{ code_form.code }}
+                    </div>
+
+                    <div class="code-actions">
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-brain"></i> Анализировать
                         </button>
                     </div>
-                    <textarea class="code-editor" placeholder='# Напишите или вставьте код для анализа...&#10;# Например:&#10;&#10;def calculate_sum(numbers):&#10;    """Функция для подсчета суммы чисел"""&#10;    return sum(numbers)&#10;&#10;result = calculate_sum([1, 2, 3, 4, 5])&#10;print(f"Сумма: {result}")'></textarea>
-                </div>
-
-                <div class="code-actions">
-                    <button class="btn-primary">
-                        <i class="fas fa-brain"></i> Анализировать
-                    </button>
-                    <button class="btn-secondary">
-                        <i class="fas fa-paperclip"></i> Прикрепить код
-                    </button>
-                </div>
+                </form>
             </div>
 
             <!-- Chat Messages -->
             <div class="chat-messages">
-                <div class="message">
-                    <div class="message-avatar">🤖</div>
-                    <div class="message-content">
-                        <p>Привет! Я AI ассистент для анализа кода.</p>
-                        <p>Загрузите код, и я помогу найти ошибки, оптимизировать и улучшить его.</p>
-                        <div class="message-time">10:30</div>
+                {% if messages %}
+                    {% for msg in messages %}
+                        <div class="message {% if msg.role == 'user' %}user{% endif %}">
+                            <div class="message-avatar">
+                                {% if msg.role == 'user' %}👤{% else %}🤖{% endif %}
+                            </div>
+                            <div class="message-content">
+                                {{ msg.content|linebreaksbr }}
+                                <div class="message-time">{{ msg.created_at|time:"H:i" }}</div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="message">
+                        <div class="message-avatar">🤖</div>
+                        <div class="message-content">
+                            <p>Привет! Я AI ассистент для анализа кода.</p>
+                            <p>Загрузите код в поле выше или напишите вопрос.</p>
+                            <div class="message-time">{% now "H:i" %}</div>
+                        </div>
                     </div>
-                </div>
-
-                <div class="message user">
-                    <div class="message-avatar">👤</div>
-                    <div class="message-content">
-                        <p>Помоги мне оптимизировать эту функцию:</p>
-                        <pre><code>def find_duplicates(arr):
-    duplicates = []
-    for i in range(len(arr)):
-        for j in range(i + 1, len(arr)):
-            if arr[i] == arr[j] and arr[i] not in duplicates:
-                duplicates.append(arr[i])
-    return duplicates</code></pre>
-                        <div class="message-time">10:32</div>
-                    </div>
-                </div>
-
-                <div class="message">
-                    <div class="message-avatar">🤖</div>
-                    <div class="message-content">
-                        <p>Ваша функция работает, но имеет сложность O(n²). Вот оптимизированная версия:</p>
-                        <pre><code>def find_duplicates(arr):
-    seen = set()
-    duplicates = set()
-    for item in arr:
-        if item in seen:
-            duplicates.add(item)
-        else:
-            seen.add(item)
-    return list(duplicates)</code></pre>
-                        <p>✅ Сложность уменьшена до O(n)</p>
-                        <p>✅ Используется множество для поиска дубликатов</p>
-                        <p>✅ Код стал более читаемым</p>
-                        <div class="message-time">10:33</div>
-                    </div>
-                </div>
-
-                <div class="message user">
-                    <div class="message-avatar">👤</div>
-                    <div class="message-content">
-                        <p>Спасибо! А как это работает с большими данными?</p>
-                        <div class="message-time">10:35</div>
-                    </div>
-                </div>
-
-                <div class="message">
-                    <div class="message-avatar">🤖</div>
-                    <div class="message-content">
-                        <p>Отличный вопрос! Оптимизированная версия:</p>
-                        <p>📊 Работает за O(n) времени<br>
-                        💾 Использует O(n) дополнительной памяти<br>
-                        🚀 Может обрабатывать миллионы элементов за секунды</p>
-                        <p>В отличие от исходной версии с O(n²), которая будет очень медленной на больших массивах.</p>
-                        <div class="message-time">10:36</div>
-                    </div>
-                </div>
+                {% endif %}
             </div>
 
             <!-- Chat Input -->
             <div class="chat-input-container">
-                <div class="input-wrapper">
-                    <input type="text" class="chat-input"
-                           placeholder="Спросите о коде, попросите объяснить или улучшить...">
-                    <button class="send-btn">
-                        <i class="fas fa-paper-plane"></i>
-                    </button>
-                </div>
+                <form method="post" action="{% url 'ai:send_message' chat.id %}" style="width: 100%;">
+                    {% csrf_token %}
+                    <div class="input-wrapper">
+                        {{ message_form.content }}
+                        <button type="submit" class="send-btn">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </form>
             </div>
         </main>
     </div>
-    <script src="{% static 'fixmate/js/ai_chat.js' %}" ></script>
+
+    <!-- Сообщения Django -->
+    {% if messages %}
+        <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+            {% for message in messages %}
+                <div class="toast show" role="alert">
+                    <div class="toast-header">
+                        <strong class="me-auto">FixMate</strong>
+                        <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+                    </div>
+                    <div class="toast-body">
+                        {{ message }}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <script>
+        function clearEditor() {
+            document.querySelector('.code-editor').value = '';
+        }
+
+        // Автоскролл вниз при загрузке
+        window.onload = function() {
+            var chatMessages = document.querySelector('.chat-messages');
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        };
+
+        // Отправка по Ctrl+Enter
+        document.querySelector('.chat-input').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && e.ctrlKey) {
+                e.preventDefault();
+                this.closest('form').submit();
+            }
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
