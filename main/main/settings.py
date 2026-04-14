@@ -158,3 +158,29 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',  # чтоб левые не лазили
     ]
 }
+
+# Настройки Ollama
+OLLAMA_HOST = 'http://localhost:11434/'  # или твой хост докера
+OLLAMA_MODEL = 'codellama:7b'  # или 'codellama', 'mistral', 'deepseek-coder' и т.д.
+OLLAMA_TIMEOUT = 60  # таймаут в секундах
+
+# Логирование
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+        'file': {
+            'class': 'logging.FileHandler',
+            'filename': 'ollama.log',
+        },
+    },
+    'loggers': {
+        'chat.services': {
+            'handlers': ['console', 'file'],
+            'level': 'INFO',
+        },
+    },
+}

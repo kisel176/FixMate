@@ -15,4 +15,5 @@ urlpatterns = [
     path('<int:chat_id>/send/', views.send_message, name='send_message'),
     path('<int:chat_id>/analyze/', views.analyze_code, name='analyze_code'),
     path('<int:chat_id>/delete/', views.delete_chat, name='delete_chat'),
+    path('message/<int:message_id>/regenerate/', views.regenerate_message, name='regenerate_message'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

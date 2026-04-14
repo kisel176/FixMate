@@ -1,0 +1,9 @@
+Ошибка получения моделей: 'name'
+OllamaService инициализирован: host=http://localhost:11434/, model=codellama:7b
+Ошибка получения моделей: module 'django.contrib.sites.requests' has no attribute 'get'
+Отправка запроса к модели: codellama:7b
+OllamaService инициализирован: host=http://localhost:11434, model=codellama:7b
+Отправка запроса к модели: codellama:7b
+OllamaService инициализирован: host=http://localhost:11434, model=codellama:7b
+Отправка запроса к модели: codellama:7b
+Отправка запроса к модели: codellama:7b
